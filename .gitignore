@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+/dist/
+/admin/dist/
+/test-results/
+
+# Local runtime data
+/data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

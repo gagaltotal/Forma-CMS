@@ -1,0 +1,51 @@
+# Contoh: Forma + PostgreSQL. Isi .env (lihat .env.example) lalu: docker compose up -d
+# Buat admin pertama:  docker compose run --rm -it forma node dist/cli.js create-admin --email you@example.com
+services:
+  forma:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_CLIENT: postgres
+      DATABASE_URL: postgres://forma:${POSTGRES_PASSWORD:?isi POSTGRES_PASSWORD di .env}@db:5432/forma
+      # Landing page premium di-seed otomatis saat boot pertama bila DB masih kosong.
+      # Ubah ke "false" bila ingin mengelola halaman depan sepenuhnya manual.
+      SEED_HOMEPAGE_ON_BOOT: ${SEED_HOMEPAGE_ON_BOOT:-true}
+      # SSO (OIDC) — set di .env. Nilai di bawah diteruskan apa adanya; kosong = SSO nonaktif.
+      SSO_ENABLED: ${SSO_ENABLED:-false}
+      SSO_PROVIDER_NAME: ${SSO_PROVIDER_NAME:-SSO}
+      SSO_ISSUER: ${SSO_ISSUER:-}
+      SSO_CLIENT_ID: ${SSO_CLIENT_ID:-}
+      SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET:-}
+      SSO_REDIRECT_URI: ${SSO_REDIRECT_URI:-}
+      SSO_SCOPES: ${SSO_SCOPES:-openid email profile}
+      SSO_STATE_TTL_MINUTES: ${SSO_STATE_TTL_MINUTES:-10}
+    ports:
+      - "127.0.0.1:3000:3000"   # hanya lokal; publikasikan lewat reverse proxy HTTPS
+    volumes:
+      - forma-data:/data
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    tmpfs: ["/tmp"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: forma
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?isi POSTGRES_PASSWORD di .env}
+      POSTGRES_DB: forma
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forma"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  forma-data:
+  pg-data:

@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Gaya tambahan untuk landing page publik (`/`).
+ * Semua warna/efek yang tidak praktis ditulis sebagai utility Tailwind diletakkan di sini.
+ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #020617;
+  }
+}
+
+@layer components {
+  /* Latar belakang bergradasi + grid halus (dipakai di <body>). */
+  .landing-bg {
+    background:
+      radial-gradient(60rem 60rem at 15% -10%, rgba(99, 102, 241, 0.28), transparent 60%),
+      radial-gradient(50rem 50rem at 100% 0%, rgba(56, 189, 248, 0.22), transparent 55%),
+      linear-gradient(160deg, #020617 0%, #0b1120 45%, #0f172a 100%);
+  }
+  .landing-grid {
+    background-color: #020617;
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-attachment: fixed;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  /* Kartu kaca (glassmorphism) untuk header, hero, dan panel. */
+  .glass {
+    background: rgba(15, 23, 42, 0.62);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+  /* Teks bergradasi untuk judul hero. */
+  .text-gradient {
+    background: linear-gradient(120deg, #ffffff 0%, #c7d2fe 45%, #7dd3fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Isi rich text dari CMS (field `body`). */
+  .prose-landing {
+    @apply prose prose-invert max-w-none prose-p:text-slate-300 prose-a:text-brand-300 prose-strong:text-white;
+  }
+}
